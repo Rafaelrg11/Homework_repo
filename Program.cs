@@ -17,6 +17,7 @@ builder.Services.AddDbContext<HomeworkContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("cadenaSQL"))
 );
 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

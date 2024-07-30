@@ -1,83 +1,68 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Homework.DTOs;
+using Homework.Models;
+using Homework.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Homework.Controllers
 {
-    public class LoanController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class LoanController : ControllerBase
     {
-        // GET: LoanController
-        public ActionResult Index()
+        private LoanOperation _loanOperation;
+
+        public LoanController(LoanOperation loanOperation) 
         {
-            return View();
+            _loanOperation = loanOperation;
         }
 
-        // GET: LoanController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet("GetLoans")]
+        public async Task<IActionResult> GetLoans()
         {
-            return View();
+            var operation = await _loanOperation.GetLoans();
+
+            return Ok(operation);
         }
 
-        // GET: LoanController/Create
-        public ActionResult Create()
+        [HttpGet("GetLoan")]
+        public async Task<IActionResult> GetLoan(int idLoan)
         {
-            return View();
+            var operation = await _loanOperation.GetLoan(idLoan);
+
+            return Ok(operation);
         }
 
-        // POST: LoanController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("CreateLoan")]
+        public async Task<IActionResult> CreateLoan(LoanDTO loandto)
         {
-            try
+            Loan loan = new Loan()
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                IdBook = loandto.IdBook,
+                IdUser = loandto.IdUser,
+                DateLoan = loandto.DateLoan,
+                DateLoanCompletion = loandto.DateLoanCompletion,
+            };
+
+            var operation = await _loanOperation.CreateLoan(loan);
+
+            return Ok(operation);
         }
 
-        // GET: LoanController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPut("UpdateLoan/{id}")]
+        public async Task<bool> UpdateLoan(LoanDTO loanDTO)
         {
-            return View();
+            var operation = await _loanOperation.UpdateLoan(loanDTO);
+
+            return operation;
         }
 
-        // POST: LoanController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpDelete("DeleteLoan/{id}")]
+        public async Task<bool> DeleteLoan(int idLoan)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var result = await _loanOperation.DeleteLoan(idLoan);
+
+            return result;
         }
 
-        // GET: LoanController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: LoanController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
