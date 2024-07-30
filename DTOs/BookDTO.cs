@@ -16,8 +16,5 @@ namespace Homework.DTOs
 
         public string? Available { get; set; }
 
-        public virtual Author? IdAutorNavigation { get; set; }
-
-        public virtual ICollection<Loan> Loans { get; set; } = new List<Loan>();
     }
 }

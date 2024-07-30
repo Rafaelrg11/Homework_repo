@@ -1,83 +1,63 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Homework.DTOs;
+using Homework.Models;
+using Homework.Operations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Homework.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class AuthorController : Controller
     {
-        // GET: AuthorController
-        public ActionResult Index()
+        private AuthorOperation _ope;
+
+        public AuthorController(AuthorOperation ope)
         {
-            return View();
+            _ope = ope;
         }
 
-        // GET: AuthorController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet("GetAuthors")]
+        public async Task<IActionResult> GetAuthors()
         {
-            return View();
+            var operation = await _ope.GetAuthors();
+
+            return Ok(operation);
+        }
+        [HttpGet("GetAuthor")]
+        public async Task<IActionResult> GetAuthor(int idAuthor)
+        {
+            var operation = await _ope.GetAuthor(idAuthor);
+
+            return Ok(operation);
         }
 
-        // GET: AuthorController/Create
-        public ActionResult Create()
+        [HttpPost("CreateAuthor")]
+        public async Task<IActionResult> CreateAuthor([FromBody] AuthorDTO authorDTO)
         {
-            return View();
-        }
-
-        // POST: AuthorController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
+            Author author = new Author()
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                Name = authorDTO.Name,
+                Email = authorDTO.Email,
+            };
+            var operation = await _ope.CreateAuthor(author);
+
+            return Ok(operation);
         }
 
-        // GET: AuthorController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPut("UpdateAuthor/{id}")]
+        public async Task<bool> UpdateAuthor(AuthorDTO authorDTO)
         {
-            return View();
+            var operation = await _ope.UpdateAuthor(authorDTO);
+
+            return operation;
         }
 
-        // POST: AuthorController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpDelete("DeleteAuthor/{id}")]
+        public async Task<bool> DeleteAuthor(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            bool operation = await _ope.DeleteAuthor(id);
 
-        // GET: AuthorController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AuthorController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return operation;
         }
     }
 }

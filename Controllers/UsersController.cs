@@ -1,83 +1,64 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Homework.Operations;
+using Homework.DTOs;
+using Homework.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Homework.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class UsersController : Controller
     {
-        // GET: UsersController
-        public ActionResult Index()
+        private UserOperarion _ope;
+
+        public UsersController (UserOperarion ope)
         {
-            return View();
+            _ope = ope;
         }
 
-        // GET: UsersController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet("GetUsers")]
+        public async Task<IActionResult> GetUsers()
         {
-            return View();
+            var operations = await _ope.GetUsers();
+
+            return Ok(operations);
         }
 
-        // GET: UsersController/Create
-        public ActionResult Create()
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUser(int idUser)
         {
-            return View();
+            var user = await _ope.GetUser(idUser);
+
+            return Ok(user);
         }
 
-        // POST: UsersController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("CreateUser")]
+        public async Task<IActionResult> CreateUser([FromBody] UserDTO userDTO)
         {
-            try
+            User user = new User()
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                Name = userDTO.Name,
+                Email = userDTO.Email,
+            };
+            var operation = await _ope.CreateUser(user);
+
+            return Ok(operation);
         }
 
-        // GET: UsersController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPut("UpdateUser/{id}")]
+        public async Task<bool> UpdateUser(UserDTO userDTO)
         {
-            return View();
+            var operation = await _ope.UpdateUser(userDTO);
+
+            return operation;
         }
 
-        // POST: UsersController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpDelete("DeleteUser/{id}")]
+        public async Task<bool> DeleteUser(int idUser)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            bool operation = await _ope.DeleteUser(idUser);
 
-        // GET: UsersController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UsersController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return operation;
         }
     }
 }
