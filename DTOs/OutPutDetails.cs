@@ -2,19 +2,22 @@
 {
     public class OutPutLoanDetails
     {
-        public int idLoan {  get; set; }
+        public int? idLoan {  get; set; }
 
-        public List<OutputBooks> Books { get; set; }
+        public int? idUser { get; set; }
+
+        public string? nameUser { get; set; }
+
+        public List<OutputBooks>? Books { get; set; }
     }
 
     public class  OutputBooks
     {
-        public int IdBook { get; set; }
+        public int? IdBook { get; set; }
 
         public string? namebook { get; set; }
 
         public string? Genrer { get; set; }        
-
 
     }
 }

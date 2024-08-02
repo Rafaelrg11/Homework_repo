@@ -4,7 +4,7 @@ namespace Homework.DTOs
 {
     public class BookDTO
     {
-        public int IdBook { get; set; }
+        public int? IdBook { get; set; }
 
         public int? IdAutor { get; set; }
 

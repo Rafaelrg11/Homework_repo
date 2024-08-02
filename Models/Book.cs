@@ -15,7 +15,7 @@ public partial class Book
 
     public int? NumPags { get; set; }
 
-    public string? Available { get; set; }
+    public string Available { get; set; }
 
     public virtual Author? IdAutorNavigation { get; set; }
 

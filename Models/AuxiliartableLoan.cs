@@ -11,8 +11,11 @@ public partial class AuxiliartableLoan
 
     public int? IdBook { get; set; }
 
+    public int? IdUser { get; set; }
+
     public virtual Book? IdBookNavigation { get; set; }
 
     public virtual Loan? IdLoanNavigation { get; set; }
 
+    public virtual User? IdUserNavigation { get; set; }
 }

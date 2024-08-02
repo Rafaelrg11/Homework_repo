@@ -29,11 +29,11 @@ namespace Homework.Controllers
             _context = context;
         }
 
-        [HttpGet("GetLoansDetails")]
+        /*[HttpGet("GetLoansDetails")]
         public async Task<AuxiliartableLoan> GetLoanDetails(int idDetails)
         {
 
-        }
+        }*/
 
        /* [HttpPost("CreateLoan")]
         public async Task<IActionResult> CreateLoan([FromBody] List<LoanCustom> loanCustoms)

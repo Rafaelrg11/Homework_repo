@@ -53,11 +53,11 @@ namespace Homework.Controllers
                 
                 if (ope.Available == "Si" || ope.Available == "si")
                 {
-                    ope.Available = "no";
-                }
-                else 
+                     ope.Available = "No";
+                }                
+                else
                 {
-                    return BadRequest("El libro" + ope.Name + "no está disponible en este momento");
+                    return BadRequest("El libro " + ope.Name + " no está disponible en este momento");
                 }
             }
 
@@ -67,18 +67,20 @@ namespace Homework.Controllers
                 DateLoanCompletion = DateTime.UtcNow,
             };
 
+            var operation = await _loanOperation.CreateLoan(loan);
+
             foreach (var item in loanCustoms)
             {
                 AuxiliartableLoan auxiliartable = new AuxiliartableLoan()
                 {
                     IdBook = item.idBook,
-                    IdLoan = loan.IdLoan
+                    IdLoan = loan.IdLoan,
+                    IdUser = item.idUser
                 };
+                var auxiliatTable = await _operationL.CreateAuxiliar(auxiliartable);
             }
-
-            var operation = await _loanOperation.CreateLoan(loan);
-
-            return Ok(operation);
+            await _context.SaveChangesAsync();
+            return Ok(loan.IdLoan);
         }
 
         [HttpPut("UpdateLoan/{id}")]

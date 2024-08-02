@@ -104,6 +104,7 @@ public partial class HomeworkContext : DbContext
                 .HasColumnName("Id_auxiliar");
             entity.Property(e => e.IdBook).HasColumnName("id_book");
             entity.Property(e => e.IdLoan).HasColumnName("id_loan");
+            entity.Property(e => e.IdUser).HasColumnName("id_user");
 
             entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.AuxiliarTable)
                 .HasForeignKey(d => d.IdBook)
@@ -112,6 +113,10 @@ public partial class HomeworkContext : DbContext
             entity.HasOne(d => d.IdLoanNavigation).WithMany(p => p.AuxiliarTable)
                 .HasForeignKey(d => d.IdLoan)
                 .HasConstraintName("FK_auxiliar_loan");
+
+            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.AuxiliarTable)
+                .HasForeignKey(d => d.IdUser)
+                .HasConstraintName("FK_auxiliar_user");
         });
 
         OnModelCreatingPartial(modelBuilder);

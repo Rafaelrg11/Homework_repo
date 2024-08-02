@@ -7,6 +7,8 @@ namespace Homework.DTOs
     {      
         public int idBook {  get; set; }  
         
+        public int idUser { get; set; }
+
         public string? Name { get; set; } 
 
         public string? Genrer { get; set; }

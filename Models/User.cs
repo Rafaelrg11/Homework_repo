@@ -11,4 +11,6 @@ public partial class User
 
     public string? Email { get; set; }
 
+    public virtual ICollection<AuxiliartableLoan> AuxiliarTable { get; set; } = new List<AuxiliartableLoan>();
+
 }
