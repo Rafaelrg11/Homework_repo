@@ -7,15 +7,9 @@ public partial class Loan
 {
     public int IdLoan { get; set; }
 
-    public int IdBook { get; set; }
+    public DateTime? DateLoan { get; set; } 
 
-    public int IdUser { get; set; }
+    public DateTime? DateLoanCompletion { get; set; } 
 
-    public DateOnly DateLoan { get; set; }
-
-    public DateOnly DateLoanCompletion { get; set; }
-
-    public virtual Book? IdBookNavigation { get; set; }
-
-    public virtual User? IdUserNavigation { get; set; }
+    public virtual ICollection<AuxiliartableLoan> AuxiliarTable { get; set; } = new List<AuxiliartableLoan>();
 }

@@ -23,6 +23,8 @@ public partial class HomeworkContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<AuxiliartableLoan> AuxiliartableLoans { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Author>(entity =>
@@ -73,16 +75,7 @@ public partial class HomeworkContext : DbContext
             entity.Property(e => e.IdLoan).HasColumnName("Id_loan");
             entity.Property(e => e.DateLoan).HasColumnName("date_loan");
             entity.Property(e => e.DateLoanCompletion).HasColumnName("date_loan_completion");
-            entity.Property(e => e.IdBook).HasColumnName("id_book");
-            entity.Property(e => e.IdUser).HasColumnName("id_user");
 
-            entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.Loans)
-                .HasForeignKey(d => d.IdBook)
-                .HasConstraintName("book_loan");
-
-            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.Loans)
-                .HasForeignKey(d => d.IdUser)
-                .HasConstraintName("user_loan");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -98,6 +91,27 @@ public partial class HomeworkContext : DbContext
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<AuxiliartableLoan>(entity =>
+        {
+            entity.HasKey(e => e.IdAuxiliar).HasName("AuxiliarTable_loans_pkey");
+
+            entity.ToTable("auxiliartable_loans");
+
+            entity.Property(e => e.IdAuxiliar)
+                .HasDefaultValueSql("nextval('\"AuxiliarTable_loans_Id_auxiliar_seq\"'::regclass)")
+                .HasColumnName("Id_auxiliar");
+            entity.Property(e => e.IdBook).HasColumnName("id_book");
+            entity.Property(e => e.IdLoan).HasColumnName("id_loan");
+
+            entity.HasOne(d => d.IdBookNavigation).WithMany(p => p.AuxiliarTable)
+                .HasForeignKey(d => d.IdBook)
+                .HasConstraintName("FK_auxiliar_book");
+
+            entity.HasOne(d => d.IdLoanNavigation).WithMany(p => p.AuxiliarTable)
+                .HasForeignKey(d => d.IdLoan)
+                .HasConstraintName("FK_auxiliar_loan");
         });
 
         OnModelCreatingPartial(modelBuilder);

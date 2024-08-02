@@ -1,6 +1,7 @@
 using Homework;
 using Homework.Operations;
 using Microsoft.EntityFrameworkCore;
+using Homework.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddScoped<AuthorOperation>();
 builder.Services.AddScoped<BookOperation>();
 builder.Services.AddScoped<LoanOperation>();
 builder.Services.AddScoped<UserOperarion>();
+builder.Services.AddScoped<AuxiliarTableLoanOperation>();
 
 builder.Services.AddDbContext<HomeworkContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("cadenaSQL"))

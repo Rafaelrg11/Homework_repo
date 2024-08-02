@@ -9,19 +9,31 @@ namespace Homework.Controllers
     [Route("[controller]")]
     public class LoanController : ControllerBase
     {
-        private LoanOperation _loanOperation;
+        private BookOperation _bookOperation;
 
-        public LoanController(LoanOperation loanOperation) 
+        private LoanOperation _loanOperation;
+        
+        private HomeworkContext _context;
+
+        private AuxiliarTableLoanOperation _operationL { get; set; }
+
+        public LoanController(AuxiliarTableLoanOperation operationL, BookOperation operation, LoanOperation loanOperation, HomeworkContext homeworkContext) 
         {
             _loanOperation = loanOperation;
+
+            _context = homeworkContext;
+
+            _bookOperation = operation;
+
+            _operationL = operationL;
         }
 
         [HttpGet("GetLoans")]
         public async Task<IActionResult> GetLoans()
         {
-            var operation = await _loanOperation.GetLoans();
+            var ope = await _loanOperation.GetLoans();
 
-            return Ok(operation);
+            return Ok(ope);
         }
 
         [HttpGet("GetLoan")]
@@ -33,15 +45,36 @@ namespace Homework.Controllers
         }
 
         [HttpPost("CreateLoan")]
-        public async Task<IActionResult> CreateLoan(LoanDTO loandto)
+        public async Task<IActionResult> CreateLoan([FromBody] List<LoanCustom> loanCustoms)
         {
+            foreach (var item in loanCustoms)
+            {
+                var ope = await _bookOperation.GetBook(item.idBook);
+                
+                if (ope.Available == "Si" || ope.Available == "si")
+                {
+                    ope.Available = "no";
+                }
+                else 
+                {
+                    return BadRequest("El libro" + ope.Name + "no está disponible en este momento");
+                }
+            }
+
             Loan loan = new Loan()
             {
-                IdBook = loandto.IdBook,
-                IdUser = loandto.IdUser,
-                DateLoan = loandto.DateLoan,
-                DateLoanCompletion = loandto.DateLoanCompletion,
+                DateLoan = DateTime.UtcNow,
+                DateLoanCompletion = DateTime.UtcNow,
             };
+
+            foreach (var item in loanCustoms)
+            {
+                AuxiliartableLoan auxiliartable = new AuxiliartableLoan()
+                {
+                    IdBook = item.idBook,
+                    IdLoan = loan.IdLoan
+                };
+            }
 
             var operation = await _loanOperation.CreateLoan(loan);
 

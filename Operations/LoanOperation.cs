@@ -42,9 +42,7 @@ namespace Homework.Operations
             if (loan == null) 
             {
                 loan.DateLoan = loanDTO.DateLoan;
-                loan.DateLoanCompletion = loanDTO.DateLoanCompletion;
-                loan.IdBook = loanDTO.IdBook;
-                loan.IdUser = loanDTO.IdUser;
+                loan.DateLoanCompletion = loanDTO.DateLoanCompletion;                
 
                 await _context.SaveChangesAsync();
             }

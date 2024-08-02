@@ -19,5 +19,6 @@ public partial class Book
 
     public virtual Author? IdAutorNavigation { get; set; }
 
-    public virtual ICollection<Loan> Loans { get; set; } = new List<Loan>();
+    public virtual ICollection<AuxiliartableLoan> AuxiliarTable { get; set; } = new List<AuxiliartableLoan>();
+
 }
