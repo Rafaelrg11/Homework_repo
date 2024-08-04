@@ -1,6 +1,7 @@
 using Homework.DTOs;
 using Homework.Models;
 using Homework.Operations;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Homework.Controllers
@@ -11,9 +12,13 @@ namespace Homework.Controllers
     {
         private BookOperation _ope;
 
-        public BookController(BookOperation ope)
+        private HomeworkContext _context;
+
+        public BookController(HomeworkContext homeworkContext,BookOperation ope)
         {
             _ope = ope;
+
+            _context = homeworkContext;
         }
 
         [HttpGet("GetBooks")]
@@ -30,7 +35,7 @@ namespace Homework.Controllers
             var operation = await _ope.GetBook(idbook);
             
             return Ok(operation);
-        }
+        }       
 
         [HttpPost("CreateBook")]
         public async Task<IActionResult> CreateBook([FromBody] BookDTO bookDTO)
@@ -47,6 +52,14 @@ namespace Homework.Controllers
             var operation = await _ope.CreateBook(result);
 
             return Ok(operation);
+        }
+
+        [HttpPut("ReturnBook/{id}")]
+        public async Task<bool> ReturnBook(ReturnBookDTO bookDTO )
+        {
+            var operation = await _ope.ReturnBook(bookDTO);
+
+            return operation;
         }
 
         [HttpPut("UpdateBook/{id}")]

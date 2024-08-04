@@ -36,6 +36,19 @@ namespace Homework.Operations
             return book;
         }
 
+        public async Task<bool> ReturnBook(ReturnBookDTO returnBook)
+        {
+            Book? book = await _context.Books.FindAsync(returnBook.IdBook);
+            {
+                if (book?.Available == "" || book?.Available == "no")
+                {
+                    book.Available = "Si";
+                }
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        }
+
         public async Task<bool> UpdateBook(BookDTO bookdto)
         {
             Book? book = await _context.Books.FindAsync(bookdto.IdBook);

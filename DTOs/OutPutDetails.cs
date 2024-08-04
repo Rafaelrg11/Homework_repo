@@ -2,22 +2,32 @@
 {
     public class OutPutLoanDetails
     {
-        public int? idLoan {  get; set; }
 
-        public int? idUser { get; set; }
+        public DateTime DateLoan { get; set; } = DateTime.Now;
+        public DateTime DateLoanCompletion { get; set; } = DateTime.Now;
+        public List<OutputBooks> Books { get; set; }
+        public OutputUser User { get; set; }
 
-        public string? nameUser { get; set; }
-
-        public List<OutputBooks>? Books { get; set; }
     }
 
-    public class  OutputBooks
+    public class OutputBooks
     {
-        public int? IdBook { get; set; }
+        public int idAuxiliar { get; set; }
+        public string namebook { get; set; }
+        public string Genrer { get; set; }
+        public OutputAuthors Authors { get; set; }
 
-        public string? namebook { get; set; }
+    }
 
-        public string? Genrer { get; set; }        
+    public class OutputAuthors
+    {
+        public string NameAuthor { get; set; }
+        public string EmailAuthor { get; set; }
+    }
 
+    public class OutputUser
+    {
+        public string NameUser { get; set; }
+        public string EmailUser { get; set; }
     }
 }

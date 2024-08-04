@@ -2,6 +2,7 @@
 using Homework.Models;
 using Homework.Operations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Homework.Controllers
 {
@@ -36,12 +37,66 @@ namespace Homework.Controllers
             return Ok(ope);
         }
 
-        [HttpGet("GetLoan")]
-        public async Task<IActionResult> GetLoan(int idLoan)
+        [HttpGet("GetLoan/{idLoan1}")]
+        public async Task<IActionResult> GetLoan(int idLoan1)
         {
-            var operation = await _loanOperation.GetLoan(idLoan);
 
-            return Ok(operation);
+            if (idLoan1 == null)
+            {
+                return BadRequest("Error 301: El Id ingresado no existe");
+            }
+
+            await _loanOperation.GetLoan(idLoan1);
+
+            var result = await _context.AuxiliartableLoans.Where(a => a.IdLoan ==  idLoan1).ToListAsync();
+
+            var UserDB = await _context.Users.Where(a => a.IdUser == a.IdUser).FirstOrDefaultAsync(); 
+
+            var LoanDb = await _context.Loans.Where(a => a.IdLoan == a.IdLoan).FirstOrDefaultAsync();
+
+            var AuthorDb = await _context.Authors.Where(a => a.IdAuthor == a.IdAuthor).FirstOrDefaultAsync();
+
+            OutPutLoanDetails outPutLoan = new OutPutLoanDetails();
+
+            List<OutputBooks> outputBooks = new List<OutputBooks>();
+
+            OutputAuthors outputAuthors = new OutputAuthors()
+            {
+                NameAuthor = AuthorDb.Name,
+                EmailAuthor = AuthorDb.Email
+            };
+
+            var LoanBooksOutPut = new OutPutLoanDetails()
+            {
+                DateLoan = LoanDb.DateLoan,
+                DateLoanCompletion = LoanDb.DateLoanCompletion
+            };
+
+            OutputUser outputUser = new OutputUser() 
+            {
+                NameUser = UserDB.Name,
+                EmailUser = UserDB.Email
+            };
+
+            var loandbDTO = await _context.Loans.Where(a => a.IdLoan == idLoan1).FirstOrDefaultAsync();
+
+            foreach (var item in result)
+            {
+                var BooksDb = await _context.Books.Where(a => a.IdBook == item.IdBook).FirstOrDefaultAsync();
+                
+                var booksOutPut = new OutputBooks
+                {
+                    idAuxiliar = item.IdAuxiliar,
+                    namebook = BooksDb.Name,
+                    Genrer = BooksDb.Gender
+                };
+                outputBooks.Add(booksOutPut);
+                booksOutPut.Authors = outputAuthors;
+            }            
+            LoanBooksOutPut.Books = outputBooks;
+            LoanBooksOutPut.User = outputUser;            
+
+            return Ok(LoanBooksOutPut);
         }
 
         [HttpPost("CreateLoan")]
