@@ -17,7 +17,7 @@ public partial class Book
 
     public string Available { get; set; }
 
-    public virtual Author IdAutorNavigation { get; set; }
+    public virtual Author Author { get; set; }
 
     public virtual ICollection<AuxiliartableLoan> AuxiliarTable { get; set; } = new List<AuxiliartableLoan>();
 

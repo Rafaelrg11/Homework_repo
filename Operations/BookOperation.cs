@@ -22,7 +22,7 @@ namespace Homework.Operations
 
         public async Task<Book> GetBook(int idBook)
         {
-            var result = await _context.Books.FindAsync(idBook);
+            var result = await _context.Books.FindAsync(idBook);            
 
             return result;
         }

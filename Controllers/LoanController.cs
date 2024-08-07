@@ -47,7 +47,7 @@ namespace Homework.Controllers
                 var loan = await _context.Loans
             .Include(l => l.AuxiliarTable)
                 .ThenInclude(a => a.IdBookNavigation)
-                    .ThenInclude(b => b.IdAutorNavigation)
+                    .ThenInclude(b => b.Author)
             .Include(l => l.AuxiliarTable)
                 .ThenInclude(a => a.IdUserNavigation)
             .FirstOrDefaultAsync(l => l.IdLoan == idLoan1);

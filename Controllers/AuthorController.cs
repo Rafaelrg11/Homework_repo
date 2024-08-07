@@ -3,6 +3,8 @@ using Homework.Models;
 using Homework.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Homework.Controllers
 {
@@ -33,9 +35,27 @@ namespace Homework.Controllers
         {
             try
             {
-               var result = await _ope.GetAuthor(idAuthor);
-               
-                return Ok(result);
+
+                await _ope.GetAuthor(idAuthor);
+
+                var authorWithBooks = await _context.Authors.Where(a => a.IdAuthor == idAuthor).Select(a => new AuthorDTO
+                {
+                    IdAuthor = idAuthor,
+                    Name = a.Name,
+                    Email = a.Email,
+                    Books = a.Books.Select(l => new BooksDto2
+                    {
+                        IdBook = l.IdBook,
+                        IdAutor = idAuthor,
+                        Name = l.Name,
+                        Gender = l.Gender,
+                        NumPags = l.NumPags,
+                        Available = l.Available,
+                    }).ToList()
+                }).ToListAsync();
+
+                return Ok(authorWithBooks);
+
             }
             catch (Exception ex) 
             { 

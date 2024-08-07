@@ -34,9 +34,21 @@ namespace Homework.Controllers
         [HttpGet("GetBook")]
         public async Task<IActionResult> GetBook(int idbook)
         {
-           var result = await _ope.GetBook(idbook);           
+            await _ope.GetBook(idbook);
 
-            return Ok(result);
+            var libroConAutor = _context.Books.Include(l => l.Author).Where(l => l.IdBook == idbook).Select(l => new BookDTO
+            {
+                IdBook = idbook,
+                IdAutor = l.IdAutor,
+                Name = l.Name,
+                Gender = l.Gender,
+                NumPags = l.NumPags,
+                Available = l.Available,
+                NameAutor = l.Author.Name,
+                EmailAutor = l.Author.Email
+            });
+
+            return Ok(libroConAutor);
         }
                           
         [HttpPost("CreateBook")]

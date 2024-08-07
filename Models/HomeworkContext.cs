@@ -61,7 +61,7 @@ public partial class HomeworkContext : DbContext
                 .HasColumnName("name");
             entity.Property(e => e.NumPags).HasColumnName("num_pags");
 
-            entity.HasOne(d => d.IdAutorNavigation).WithMany(p => p.Books)
+            entity.HasOne(d => d.Author).WithMany(p => p.Books)
                 .HasForeignKey(d => d.IdAutor)
                 .HasConstraintName("author_of_book");
         });

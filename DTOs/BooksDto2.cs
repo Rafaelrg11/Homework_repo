@@ -1,8 +1,6 @@
-﻿using Homework.Models;
-
-namespace Homework.DTOs
+﻿namespace Homework.DTOs
 {
-    public class BookDTO
+    public class BooksDto2
     {
         public int IdBook { get; set; }
 
@@ -15,9 +13,5 @@ namespace Homework.DTOs
         public int NumPags { get; set; }
 
         public string Available { get; set; }
-
-        public string NameAutor { get; set; }
-
-        public string EmailAutor { get; set; }
     }
 }
