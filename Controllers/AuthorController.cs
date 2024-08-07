@@ -2,6 +2,7 @@
 using Homework.Models;
 using Homework.Operations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Homework.Controllers
 {
@@ -11,9 +12,13 @@ namespace Homework.Controllers
     {
         private AuthorOperation _ope;
 
-        public AuthorController(AuthorOperation ope)
+        private HomeworkContext _context;
+
+        public AuthorController(HomeworkContext homework,AuthorOperation ope)
         {
             _ope = ope;
+
+            _context = homework;
         }
 
         [HttpGet("GetAuthors")]
@@ -23,12 +28,19 @@ namespace Homework.Controllers
 
             return Ok(operation);
         }
-        [HttpGet("GetAuthor")]
+        [HttpGet("GetAuthor/{idAuthor}")]
         public async Task<IActionResult> GetAuthor(int idAuthor)
         {
-            var operation = await _ope.GetAuthor(idAuthor);
-
-            return Ok(operation);
+            try
+            {
+               var result = await _ope.GetAuthor(idAuthor);
+               
+                return Ok(result);
+            }
+            catch (Exception ex) 
+            { 
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("CreateAuthor")]

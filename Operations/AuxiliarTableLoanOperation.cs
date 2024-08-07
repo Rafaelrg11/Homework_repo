@@ -41,9 +41,9 @@ namespace Homework.Operations
         {
             AuxiliartableLoan? auxiliartable = await _context.AuxiliartableLoans.FindAsync(auxiliarTableDTO.IdAuxiliar);
             {
-                auxiliartable.IdLoan = auxiliarTableDTO?.IdLoan;
-                auxiliartable.IdBook = auxiliarTableDTO?.IdBook;
-                auxiliartable.IdUser = auxiliarTableDTO?.IdUser;
+                auxiliartable.IdLoan = auxiliarTableDTO.IdLoan;
+                auxiliartable.IdBook = auxiliarTableDTO.IdBook;
+                auxiliartable.IdUser = auxiliarTableDTO.IdUser;
 
                 await _context.SaveChangesAsync();
             };

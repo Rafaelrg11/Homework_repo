@@ -3,6 +3,8 @@ using Homework.Models;
 using Homework.Operations;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Homework.Controllers
 {
@@ -14,7 +16,7 @@ namespace Homework.Controllers
 
         private HomeworkContext _context;
 
-        public BookController(HomeworkContext homeworkContext,BookOperation ope)
+        public BookController(HomeworkContext homeworkContext, BookOperation ope)
         {
             _ope = ope;
 
@@ -32,11 +34,11 @@ namespace Homework.Controllers
         [HttpGet("GetBook")]
         public async Task<IActionResult> GetBook(int idbook)
         {
-            var operation = await _ope.GetBook(idbook);
-            
-            return Ok(operation);
-        }       
+           var result = await _ope.GetBook(idbook);           
 
+            return Ok(result);
+        }
+                          
         [HttpPost("CreateBook")]
         public async Task<IActionResult> CreateBook([FromBody] BookDTO bookDTO)
         {

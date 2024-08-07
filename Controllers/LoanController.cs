@@ -40,63 +40,120 @@ namespace Homework.Controllers
         [HttpGet("GetLoan/{idLoan1}")]
         public async Task<IActionResult> GetLoan(int idLoan1)
         {
-
-            if (idLoan1 == null)
+            try
             {
-                return BadRequest("Error 301: El Id ingresado no existe");
+                await _loanOperation.GetLoan(idLoan1);
+
+                var loan = await _context.Loans
+            .Include(l => l.AuxiliarTable)
+                .ThenInclude(a => a.IdBookNavigation)
+                    .ThenInclude(b => b.IdAutorNavigation)
+            .Include(l => l.AuxiliarTable)
+                .ThenInclude(a => a.IdUserNavigation)
+            .FirstOrDefaultAsync(l => l.IdLoan == idLoan1);
+
+                var result = await _context.AuxiliartableLoans.Where(a => a.IdLoan == idLoan1).ToListAsync();
+
+                var LoanDb = await _context.Loans.Where(a => a.IdLoan == idLoan1).FirstOrDefaultAsync();
+
+                List<OutputBooks> outputBooks = new List<OutputBooks>();
+
+                List<User> users = new List<User>();
+
+                List<Author> authors = new List<Author>();
+
+
+                var LoanBooksOutPut = new OutPutLoanDetails()
+                {
+                    DateLoan = LoanDb.DateLoan,
+                    DateLoanCompletion = LoanDb.DateLoanCompletion
+                };
+
+                var authorId = new HashSet<int>();
+                foreach (var item in result)
+                {
+                    if (item.IdBookNavigation != null)
+                    {
+                        authorId.Add(item.IdBookNavigation.IdAutor);
+                    }                  
+                }
+
+                if (authorId.Count > 0)
+                {
+                    authors = await _context.Authors
+                        .Where(a => authorId.Contains(a.IdAuthor))
+                        .ToListAsync();
+                }
+
+                var usersId = new HashSet<int>();
+                foreach(var item in result)
+                {
+                    usersId.Add(item.IdUser);
+                }
+
+                if (usersId.Count > 0)
+                {
+                    users = await _context.Users
+                        .Where(a => usersId.Contains(a.IdUser))
+                        .ToListAsync();
+                }
+
+                var OutPutBooks = new List<OutputBooks>();
+                foreach (var item in result)
+                {
+                    var book = item.IdBookNavigation;
+                    if (book != null) 
+                    {
+                        var booksAutor = new List<OutputAuthors>();
+                        foreach (var item1 in authors)
+                        {
+                            if (item1.IdAuthor  == book.IdAutor)
+                            {
+                                booksAutor.Add(new OutputAuthors
+                                {
+                                    NameAuthor = item1.Name,
+                                    EmailAuthor = item1.Email
+                                });
+                            }
+                        }
+
+                        outputBooks.Add(new OutputBooks
+                        {
+                            idAuxiliar = item.IdAuxiliar,
+                            namebook = book.Name,
+                            Genrer = book.Gender,
+                            Authors = booksAutor
+                             
+                        });
+                    }
+                }
+
+                OutputUser outputUser = null;               
+                    if (users.Count > 0)
+                    {
+                        var firstUser = users.First();
+                    outputUser = new OutputUser
+                    {
+                        NameUser = firstUser.Name,
+                        EmailUser = firstUser.Email
+                    };
+                    }
+
+                var loanOutput = new OutPutLoanDetails()
+                {
+                    DateLoan = loan.DateLoan,
+                    DateLoanCompletion = loan.DateLoanCompletion,
+                    Books = outputBooks,
+                    User = outputUser
+                };
+
+                return Ok(loanOutput);
             }
 
-            await _loanOperation.GetLoan(idLoan1);
-
-            var result = await _context.AuxiliartableLoans.Where(a => a.IdLoan ==  idLoan1).ToListAsync();
-
-            var UserDB = await _context.Users.Where(a => a.IdUser == a.IdUser).FirstOrDefaultAsync(); 
-
-            var LoanDb = await _context.Loans.Where(a => a.IdLoan == a.IdLoan).FirstOrDefaultAsync();
-
-            var AuthorDb = await _context.Authors.Where(a => a.IdAuthor == a.IdAuthor).FirstOrDefaultAsync();
-
-            OutPutLoanDetails outPutLoan = new OutPutLoanDetails();
-
-            List<OutputBooks> outputBooks = new List<OutputBooks>();
-
-            OutputAuthors outputAuthors = new OutputAuthors()
-            {
-                NameAuthor = AuthorDb.Name,
-                EmailAuthor = AuthorDb.Email
-            };
-
-            var LoanBooksOutPut = new OutPutLoanDetails()
-            {
-                DateLoan = LoanDb.DateLoan,
-                DateLoanCompletion = LoanDb.DateLoanCompletion
-            };
-
-            OutputUser outputUser = new OutputUser() 
-            {
-                NameUser = UserDB.Name,
-                EmailUser = UserDB.Email
-            };
-
-            var loandbDTO = await _context.Loans.Where(a => a.IdLoan == idLoan1).FirstOrDefaultAsync();
-
-            foreach (var item in result)
-            {
-                var BooksDb = await _context.Books.Where(a => a.IdBook == item.IdBook).FirstOrDefaultAsync();
-                
-                var booksOutPut = new OutputBooks
-                {
-                    idAuxiliar = item.IdAuxiliar,
-                    namebook = BooksDb.Name,
-                    Genrer = BooksDb.Gender
-                };
-                outputBooks.Add(booksOutPut);
-                booksOutPut.Authors = outputAuthors;
-            }            
-            LoanBooksOutPut.Books = outputBooks;
-            LoanBooksOutPut.User = outputUser;            
-
-            return Ok(LoanBooksOutPut);
+            catch (Exception ex) 
+            { 
+                return BadRequest(ex.Message);
+            }           
         }
 
         [HttpPost("CreateLoan")]
