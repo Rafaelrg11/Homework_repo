@@ -40,7 +40,7 @@ namespace Homework.Operations
         {
             Book? book = await _context.Books.FindAsync(returnBook.IdBook);
             {
-                if (book?.Available == "" || book?.Available == "no")
+                if (book.Available == "No" || book.Available == "no")
                 {
                     book.Available = "Si";
                 }

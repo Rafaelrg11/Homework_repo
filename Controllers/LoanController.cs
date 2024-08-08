@@ -159,40 +159,49 @@ namespace Homework.Controllers
         [HttpPost("CreateLoan")]
         public async Task<IActionResult> CreateLoan([FromBody] List<LoanCustom> loanCustoms)
         {
-            foreach (var item in loanCustoms)
+            try
             {
-                var ope = await _bookOperation.GetBook(item.idBook);
-                
-                if (ope.Available == "Si" || ope.Available == "si")
+                foreach (var item in loanCustoms)
                 {
-                     ope.Available = "No";
-                }                
-                else
-                {
-                    return BadRequest("El libro " + ope.Name + " no está disponible en este momento");
+                    var ope = await _bookOperation.GetBook(item.idBook);
+
+                    if (ope.Available == "Si" || ope.Available == "si")
+                    {
+                        ope.Available = "No";
+                    }
+                    else
+                    {
+                        return BadRequest("El libro " + ope.Name + " no está disponible en este momento");
+                    }
                 }
-            }
 
-            Loan loan = new Loan()
-            {
-                DateLoan = DateTime.UtcNow,
-                DateLoanCompletion = DateTime.UtcNow,
-            };
-
-            var operation = await _loanOperation.CreateLoan(loan);
-
-            foreach (var item in loanCustoms)
-            {
-                AuxiliartableLoan auxiliartable = new AuxiliartableLoan()
+                Loan loan = new Loan()
                 {
-                    IdBook = item.idBook,
-                    IdLoan = loan.IdLoan,
-                    IdUser = item.idUser
+                    DateLoan = DateTime.UtcNow,
+                    DateLoanCompletion = DateTime.UtcNow,
                 };
-                var auxiliatTable = await _operationL.CreateAuxiliar(auxiliartable);
+
+                var operation = await _loanOperation.CreateLoan(loan);
+
+                foreach (var item in loanCustoms)
+                {
+                    AuxiliartableLoan auxiliartable = new AuxiliartableLoan()
+                    {
+                        IdBook = item.idBook,
+                        IdLoan = loan.IdLoan,
+                        IdUser = item.idUser
+                    };
+                    var auxiliatTable = await _operationL.CreateAuxiliar(auxiliartable);
+                }
+                await _context.SaveChangesAsync();
+                return Ok(loan.IdLoan);
             }
-            await _context.SaveChangesAsync();
-            return Ok(loan.IdLoan);
+
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [HttpPut("UpdateLoan/{id}")]

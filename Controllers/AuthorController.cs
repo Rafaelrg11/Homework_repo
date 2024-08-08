@@ -26,16 +26,38 @@ namespace Homework.Controllers
         [HttpGet("GetAuthors")]
         public async Task<IActionResult> GetAuthors()
         {
-            var operation = await _ope.GetAuthors();
+            try
+            {
+                await _ope.GetAuthors();
 
-            return Ok(operation);
+                var authorWithBooks = await _context.Authors.Select(a => new AuthorDTO
+                {
+                    IdAuthor = a.IdAuthor,
+                    Name = a.Name,
+                    Email = a.Email,
+                    Books = a.Books.Select(l => new BooksDto2
+                    {
+                        IdBook = l.IdBook,
+                        Name = l.Name,
+                        Gender = l.Gender,
+                        NumPags = l.NumPags,
+                        Available = l.Available,
+                    }).ToList()
+                }).ToListAsync();
+
+                return Ok(authorWithBooks);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
         [HttpGet("GetAuthor/{idAuthor}")]
         public async Task<IActionResult> GetAuthor(int idAuthor)
         {
             try
             {
-
                 await _ope.GetAuthor(idAuthor);
 
                 var authorWithBooks = await _context.Authors.Where(a => a.IdAuthor == idAuthor).Select(a => new AuthorDTO

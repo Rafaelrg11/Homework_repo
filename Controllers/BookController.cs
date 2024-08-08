@@ -26,54 +26,90 @@ namespace Homework.Controllers
         [HttpGet("GetBooks")]
         public async Task<IActionResult> GetBooks()
         {
-            var operation = await _ope.GetBooks();
 
-            return Ok(operation);
-        }
+            try
+            {
+
+                await _ope.GetBooks();
+
+                var allBooks = await _context.Books.Select(a => new BooksDto3
+                {
+                    IdBook = a.IdBook,
+                    IdAutor = a.IdAutor,
+                    Name = a.Name,
+                    Gender = a.Gender,
+                    NumPags = a.NumPags,
+                    Available = a.Available,
+                    NameAutor = a.Author.Name,
+                    EmailAutor = a.Author.Email
+                }).ToListAsync();
+
+                return Ok(allBooks);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+            }
 
         [HttpGet("GetBook")]
         public async Task<IActionResult> GetBook(int idbook)
         {
-            await _ope.GetBook(idbook);
-
-            var libroConAutor = _context.Books.Include(l => l.Author).Where(l => l.IdBook == idbook).Select(l => new BookDTO
+            try
             {
-                IdBook = idbook,
-                IdAutor = l.IdAutor,
-                Name = l.Name,
-                Gender = l.Gender,
-                NumPags = l.NumPags,
-                Available = l.Available,
-                NameAutor = l.Author.Name,
-                EmailAutor = l.Author.Email
-            });
+                await _ope.GetBook(idbook);
 
-            return Ok(libroConAutor);
+                var libroConAutor = _context.Books.Include(l => l.Author).Where(l => l.IdBook == idbook).Select(l => new BookDTO
+                {
+                    IdBook = idbook,
+                    IdAutor = l.IdAutor,
+                    Name = l.Name,
+                    Gender = l.Gender,
+                    NumPags = l.NumPags,
+                    Available = l.Available,
+                    NameAutor = l.Author.Name,
+                    EmailAutor = l.Author.Email
+                });
+
+                return Ok(libroConAutor);
+            }
+            catch (Exception ex) 
+            { 
+              return BadRequest(ex.Message);
+            }
         }
                           
         [HttpPost("CreateBook")]
         public async Task<IActionResult> CreateBook([FromBody] BookDTO bookDTO)
         {
-            Book result = new Book()
+            try
             {
-                Name = bookDTO.Name,
-                IdAutor = bookDTO.IdAutor,
-                Gender = bookDTO.Gender,
-                NumPags = bookDTO.NumPags,
-                Available = bookDTO.Available
-            };
+                Book result = new Book()
+                {
+                    Name = bookDTO.Name,
+                    IdAutor = bookDTO.IdAutor,
+                    Gender = bookDTO.Gender,
+                    NumPags = bookDTO.NumPags,
+                    Available = bookDTO.Available
+                };
 
-            var operation = await _ope.CreateBook(result);
+                var operation = await _ope.CreateBook(result);
 
-            return Ok(operation);
+                return Ok(operation);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("ReturnBook/{id}")]
         public async Task<bool> ReturnBook(ReturnBookDTO bookDTO )
-        {
-            var operation = await _ope.ReturnBook(bookDTO);
+        {          
+                var operation = await _ope.ReturnBook(bookDTO);
 
-            return operation;
+                return operation;
+                       
         }
 
         [HttpPut("UpdateBook/{id}")]

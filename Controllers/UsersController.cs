@@ -2,6 +2,7 @@
 using Homework.DTOs;
 using Homework.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Homework.Controllers
 {
@@ -11,25 +12,71 @@ namespace Homework.Controllers
     {
         private UserOperarion _ope;
 
-        public UsersController (UserOperarion ope)
+        private HomeworkContext _context;
+
+        public UsersController (HomeworkContext homeworkContext , UserOperarion ope)
         {
             _ope = ope;
+
+            _context = homeworkContext;
         }
 
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsers()
         {
-            var operations = await _ope.GetUsers();
+            try
+            {
+                await _ope.GetUsers();
 
-            return Ok(operations);
-        }
+                var allUsers = await _context.Users.Select(a => new UserDTO
+                {
+                    IdUser = a.IdUser,
+                    Name = a.Name,
+                    Email = a.Email,
+                    AuxiliarTable = a.AuxiliarTable.Select(a => new AuxiliarTableDTO
+                    {
+                        IdAuxiliar = a.IdAuxiliar,
+                        IdBook = a.IdBook,
+                        IdLoan = a.IdLoan,
+                        IdUser = a.IdUser,
+                    }).ToList()
+                }).ToListAsync();
 
-        [HttpGet("GetUser")]
+                return Ok(allUsers);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+
+            }
+
+        [HttpGet("GetUser/{idUser}")]
         public async Task<IActionResult> GetUser(int idUser)
         {
-            var user = await _ope.GetUser(idUser);
+            try
+            {
+                await _ope.GetUser(idUser);
 
-            return Ok(user);
+                var user = await _context.Users.Where(a => a.IdUser == idUser).Select(a => new UserDTO
+                {
+                    Name = a.Name,
+                    Email = a.Email,
+                    IdUser = idUser,
+                    AuxiliarTable = a.AuxiliarTable.Select(a => new AuxiliarTableDTO
+                    {
+                        IdUser = a.IdUser,
+                        IdBook = a.IdBook,
+                        IdLoan = a.IdLoan,
+                    }).ToList()
+                }).ToListAsync();
+
+                return Ok(user);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("CreateUser")]
