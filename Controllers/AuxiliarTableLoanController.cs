@@ -29,6 +29,15 @@ namespace Homework.Controllers
             _context = context;
         }
 
+        [HttpPut("UpdateAuxiliar/{idAuxiliar}")]
+        public async Task<bool> UpdateAuxiliar(int idAuxiliar)
+        {
+            var result = await _operation.DeleteAuxiliar(idAuxiliar);
+
+            return result;
+        }
+
+
         [HttpDelete("DeleteAuxiliar/{idAuxiliar}")]
         public async Task<bool> DeleteAuxiliar(int idAuxiliar)
         {
@@ -36,5 +45,7 @@ namespace Homework.Controllers
 
             return result;
         }
+
+
     }  
 }
