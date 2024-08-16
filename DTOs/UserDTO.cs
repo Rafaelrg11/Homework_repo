@@ -6,9 +6,9 @@ namespace Homework.DTOs
     {
         public int IdUser { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         public List<AuxiliarTableDTO> AuxiliarTable { get; set; }
     }

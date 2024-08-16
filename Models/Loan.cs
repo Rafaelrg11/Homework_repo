@@ -11,5 +11,5 @@ public partial class Loan
 
     public DateTime DateLoanCompletion { get; set; }
 
-    public virtual ICollection<AuxiliartableLoan>? AuxiliarTable { get; set; } = new List<AuxiliartableLoan>();
+    public virtual ICollection<AuxiliartableLoan> AuxiliarTable { get; set; } = new List<AuxiliartableLoan>();
 }

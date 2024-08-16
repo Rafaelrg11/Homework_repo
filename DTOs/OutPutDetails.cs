@@ -6,7 +6,7 @@
         public DateTime DateLoan { get; set; } = DateTime.Now;
         public DateTime DateLoanCompletion { get; set; } = DateTime.Now;
         public List<OutputBooks> Books { get; set; }
-        public OutputUser? User { get; set; }
+        public OutputUser User { get; set; }
 
     }
 

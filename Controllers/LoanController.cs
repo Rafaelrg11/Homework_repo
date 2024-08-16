@@ -32,9 +32,30 @@ namespace Homework.Controllers
         [HttpGet("GetLoans")]
         public async Task<IActionResult> GetLoans()
         {
-            var ope = await _loanOperation.GetLoans();
+            try
+            {
+                await _loanOperation.GetLoans();
 
-            return Ok(ope);
+                var allLoans = await _context.Loans.Select(a => new LoanDTO
+                {
+                    IdLoan = a.IdLoan,
+                    DateLoan = a.DateLoan,
+                    DateLoanCompletion = a.DateLoanCompletion,
+                    AuxiliarTable = a.AuxiliarTable.Select(a => new AuxiliarTableDTO
+                    {
+                        IdAuxiliar = a.IdAuxiliar,
+                        IdBook = a.IdBook,
+                        IdLoan = a.IdLoan,
+                        IdUser = a.IdUser,
+                    }).ToList()
+                }).ToListAsync();
+
+                return Ok(allLoans);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("GetLoan/{idLoan1}")]
@@ -211,7 +232,7 @@ namespace Homework.Controllers
             return operation;
         }
 
-        [HttpDelete("DeleteLoan/{id}")]
+        [HttpDelete("DeleteLoan/{idLoan}")]
         public async Task<bool> DeleteLoan(int idLoan)
         {
             var result = await _loanOperation.DeleteLoan(idLoan);
